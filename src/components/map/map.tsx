@@ -98,17 +98,13 @@ const Markers = ({ points }: Props) => {
         clusterer.current?.addMarkers(Object.values(markers));
         console.log(clusterer.current);
     }, [points, nbPoint]);
-   /*  function updateCluster() {
+    function updateCluster() {
         if (clusterer.current) {
             clusterer.current?.clearMarkers;
             clusterer.current?.addMarkers(Object.values(markers));
             console.log(clusterer.current);
         }
-    }; */
-    function f(){
-        console.log('git testing');
-        return null;
-    }
+    };
     const setMarkerRef = (marker: Marker | null, key: string) => {
         if (marker && markers[key]) return;
         if (!marker && !markers[key]) return;
