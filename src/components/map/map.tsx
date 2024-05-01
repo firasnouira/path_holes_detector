@@ -105,10 +105,7 @@ const Markers = ({ points }: Props) => {
             console.log(clusterer.current);
         }
     }; */
-    function f(){
-        console.log('git testing');
-        return null;
-    }
+    
     const setMarkerRef = (marker: Marker | null, key: string) => {
         if (marker && markers[key]) return;
         if (!marker && !markers[key]) return;
