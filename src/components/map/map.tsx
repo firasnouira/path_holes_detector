@@ -1,15 +1,17 @@
 import './map.css';
+import { Button, Form, Modal } from 'react-bootstrap';
 import {
     APIProvider,
     Map,
     useMap,
     AdvancedMarker,
-    useMapsLibrary
+    useMapsLibrary,
+
 } from "@vis.gl/react-google-maps";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import type { Marker } from "@googlemaps/markerclusterer";
 import { useEffect, useState, useRef } from "react";
-import { NavbarBrand } from 'react-bootstrap';
+
 
 export default function Intro() {
     function randomize() {
@@ -34,21 +36,37 @@ export default function Intro() {
         key: JSON.stringify({ danger, lat, lng }),
         danger: danger
     })))
-
+    const [showAddHolePopup, setShowAddHolePopup] = useState(false);
+    const [dangerValue, setDangerValue] = useState(0);
+    const [selectedLocation, setSelectedLocation] = useState<{ lat: number | null, lng: number | null }>();
     function handleMapDblClick(event: any) {
-        const newLat = event.detail.latLng.lat;
-        const newLng = event.detail.latLng.lng;
-        const newPoint = {
-            lat: newLat,
-            lng: newLng,
-            key: JSON.stringify({ danger: randomize(), lat: newLat, lng: newLng }),
-            danger: randomize(),
-        };
+        /*  const newLat = event.detail.latLng.lat;
+         const newLng = event.detail.latLng.lng; */
+        setSelectedLocation(event.detail.latLng);
+        console.log(event.detail.latLng);
+        setShowAddHolePopup(true);
 
-        setPass([...pass, newPoint]);
+
     }
-    const [triggerMarkers, setTriggerMarkers] = useState(false);
+    const handleAddHoleSubmit = (event: any) => {
+        if (selectedLocation?.lat && selectedLocation?.lng) {
+            const newPoint = {
+                lat: selectedLocation.lat,
+                lng: selectedLocation.lng,
+                key: JSON.stringify({ danger: dangerValue, lat: selectedLocation.lat, lng: selectedLocation.lng }),
+                danger: dangerValue,
+            };
+            setPass([...pass, newPoint]);
+            setDangerValue(0);
+            setSelectedLocation({ lat: null, lng: null });
+            setShowAddHolePopup(false);
+        }
 
+    }
+    const handleModalClose = () => {
+        setShowAddHolePopup(false);
+    };
+    const handleDangerChange = (event: any) => setDangerValue(event.target.value);
     return (
         <div style={{
             height: '75vh',
@@ -65,8 +83,27 @@ export default function Intro() {
                 >
                     <Markers points={pass}
                     />
-                    {/* <Directions /> */}
+                    <Directions />
                 </Map>
+                {showAddHolePopup && (
+                        <Modal show={showAddHolePopup} onHide={handleModalClose}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>Add New Hole</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                <Form onSubmit={handleAddHoleSubmit}>
+
+                                    <Form.Group controlId="dangerLevel">
+                                        <Form.Label>Danger Level</Form.Label>
+                                        <Form.Control type="number" value={dangerValue} onChange={handleDangerChange} placeholder="Enter danger level" />
+                                    </Form.Group>
+                                    <Button variant="primary" type="submit" style={{ marginTop: "10px", position: "relative", left: "100%", marginLeft: "-75px" }}>
+                                        Submit
+                                    </Button>
+                                </Form>
+                            </Modal.Body>
+                        </Modal>
+                    )}
             </APIProvider>
 
         </div>
@@ -98,14 +135,14 @@ const Markers = ({ points }: Props) => {
         clusterer.current?.addMarkers(Object.values(markers));
         console.log(clusterer.current);
     }, [points, nbPoint]);
-   /*  function updateCluster() {
-        if (clusterer.current) {
-            clusterer.current?.clearMarkers;
-            clusterer.current?.addMarkers(Object.values(markers));
-            console.log(clusterer.current);
-        }
-    }; */
-    
+    /*  function updateCluster() {
+         if (clusterer.current) {
+             clusterer.current?.clearMarkers;
+             clusterer.current?.addMarkers(Object.values(markers));
+             console.log(clusterer.current);
+         }
+     }; */
+
     const setMarkerRef = (marker: Marker | null, key: string) => {
         if (marker && markers[key]) return;
         if (!marker && !markers[key]) return;
@@ -163,7 +200,6 @@ function Directions() {
         setDirectionsRenderer(new routesLibrary.DirectionsRenderer({ map }));
 
     }, [routesLibrary, map])
-
     useEffect(() => {
         if (!directionsService || !directionsRenderer) return;
 

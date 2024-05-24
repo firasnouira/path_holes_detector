@@ -1,11 +1,11 @@
 
-import MapForm from './components/form/form'
+
 import './App.css'
 import MapComponent from './components/map/map'
+import Model from './components/model/model'
+/* import PotholeDetection from './components/model/model' */
 
 function App() {
-  
-
 
   return (
     <>
@@ -59,6 +59,8 @@ function App() {
             </video>
         </section>
         <MapComponent/>
+        <Model/>
+        {/* <PotholeDetection></PotholeDetection> */}
     </body>
     
     </>
