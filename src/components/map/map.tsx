@@ -11,9 +11,24 @@ import {
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import type { Marker } from "@googlemaps/markerclusterer";
 import { useEffect, useState, useRef } from "react";
+import axios from 'axios';
+import PopupModal from '../form/mapForm';
+import io from 'socket.io-client';
+
+let incerementer = 0
+const socket = io('http://localhost:5000');
 
 
-export default function Intro() {
+
+interface User {
+    username: string;
+    password: string;
+  }
+  
+  interface MapComponentProps {
+    loggedInUser: User | null;
+  }
+export default function Intro({loggedInUser} : MapComponentProps) {
     function randomize() {
         return Math.random();
     }
@@ -36,18 +51,94 @@ export default function Intro() {
         key: JSON.stringify({ danger, lat, lng }),
         danger: danger
     })))
+    const [currentLocation, setCurrentLocation] = useState<{ lat: number, lng: number } | null>(null)
+    function getCurrentLocation() {
+        let pos: { lat: number, lng: number };
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                console.log(position.coords.latitude, position.coords.longitude);
+                pos.lat = position.coords.latitude,
+                    pos.lng = position.coords.longitude
+
+            },
+        );
+
+
+    }
+    function addNewHole(data: any) {
+        if (selectedLocation?.lat && selectedLocation?.lng) {
+            const newPoint = {
+                lat: selectedLocation.lat,
+                lng: selectedLocation.lng,
+                key: JSON.stringify({ danger: dangerValue, lat: selectedLocation.lat, lng: selectedLocation.lng }),
+                danger: dangerValue,
+            };
+            setPass([...pass, newPoint]);
+            setDangerValue(0);
+            setSelectedLocation(null);
+            /*  setShowAddHolePopup(false); */
+        }
+
+        /*  navigator.geolocation.getCurrentPosition(
+             (position) => {
+                 console.log(position.coords.latitude, position.coords.longitude);
+ 
+                 const newPoint = {
+                     lat: position.coords.latitude,
+                     lng: position.coords.longitude,
+                     key: JSON.stringify({ danger: dangerValue, lat: position.coords.latitude, lng: position.coords.longitude,incerementer }),
+                     danger: dangerValue,
+                 };
+                 console.log(incerementer)
+ 
+                 incerementer++;
+                 console.log("new POTHOLE")
+                 setPass([...pass, newPoint]);
+             },
+         ); */
+    }
+
+
+
+    socket.on("new_counts", (data) => {
+        console.log("new B4 and should add times", data)
+        addNewHole(data)
+        /* let pos: { lat: number, lng: number };
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                console.log(position.coords.latitude, position.coords.longitude);
+                pos.lat = position.coords.latitude,
+                pos.lng = position.coords.longitude
+
+            },
+        ); */
+    });
+
+    /*  return () => {
+         socket.off('new_counts');
+     }; */
+
+
     const [showAddHolePopup, setShowAddHolePopup] = useState(false);
     const [dangerValue, setDangerValue] = useState(0);
-    const [selectedLocation, setSelectedLocation] = useState<{ lat: number | null, lng: number | null }>();
+    const [selectedLocation, setSelectedLocation] = useState<{ lat: number, lng: number } | null>(null);
+    const handleDanger = (data: number) => {
+        setDangerValue(data);
+    };
     function handleMapDblClick(event: any) {
         /*  const newLat = event.detail.latLng.lat;
          const newLng = event.detail.latLng.lng; */
+         if (!loggedInUser) {
+            return
+         }
         setSelectedLocation(event.detail.latLng);
-        console.log(event.detail.latLng);
         setShowAddHolePopup(true);
 
 
     }
+    const handleModalClose = () => setShowAddHolePopup(false);
+    ;
+    const handleDangerChange = (event: any) => setDangerValue(event.target.value);
     const handleAddHoleSubmit = (event: any) => {
         if (selectedLocation?.lat && selectedLocation?.lng) {
             const newPoint = {
@@ -58,15 +149,12 @@ export default function Intro() {
             };
             setPass([...pass, newPoint]);
             setDangerValue(0);
-            setSelectedLocation({ lat: null, lng: null });
+            setSelectedLocation(null);
             setShowAddHolePopup(false);
         }
 
     }
-    const handleModalClose = () => {
-        setShowAddHolePopup(false);
-    };
-    const handleDangerChange = (event: any) => setDangerValue(event.target.value);
+
     return (
         <div style={{
             height: '75vh',
@@ -83,27 +171,11 @@ export default function Intro() {
                 >
                     <Markers points={pass}
                     />
-                    <Directions />
+                    {/* <Directions /> */}
                 </Map>
-                {showAddHolePopup && (
-                        <Modal show={showAddHolePopup} onHide={handleModalClose}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>Add New Hole</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <Form onSubmit={handleAddHoleSubmit}>
 
-                                    <Form.Group controlId="dangerLevel">
-                                        <Form.Label>Danger Level</Form.Label>
-                                        <Form.Control type="number" value={dangerValue} onChange={handleDangerChange} placeholder="Enter danger level" />
-                                    </Form.Group>
-                                    <Button variant="primary" type="submit" style={{ marginTop: "10px", position: "relative", left: "100%", marginLeft: "-75px" }}>
-                                        Submit
-                                    </Button>
-                                </Form>
-                            </Modal.Body>
-                        </Modal>
-                    )}
+                <PopupModal showAddHolePopup={showAddHolePopup} handleModalClose={handleModalClose} onDanger={handleDanger} />
+
             </APIProvider>
 
         </div>
@@ -144,8 +216,7 @@ const Markers = ({ points }: Props) => {
      }; */
 
     const setMarkerRef = (marker: Marker | null, key: string) => {
-        if (marker && markers[key]) return;
-        if (!marker && !markers[key]) return;
+
         if (marker) {
             markers[key] = marker;
             if (nbPoint <= points.length + 1) {
@@ -153,14 +224,14 @@ const Markers = ({ points }: Props) => {
                 console.log(nbPoint, '+1')
                 return
             }
-        } else if (!marker) {
+        } /* else if (!marker) {
             delete markers[key];
             if (nbPoint <= points.length + 1) {
                 setNbPoint(nbPoint => nbPoint - 1)
                 console.log(nbPoint, '-1')
                 return
             }
-        }
+        } */
 
     };
     function selectClass(danger: number) {
@@ -187,6 +258,7 @@ const Markers = ({ points }: Props) => {
     );
 };
 
+/* 
 function Directions() {
     const map = useMap();
     const routesLibrary = useMapsLibrary("routes");
@@ -219,3 +291,4 @@ function Directions() {
     return null
 }
 
+ */
