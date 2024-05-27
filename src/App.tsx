@@ -1,71 +1,44 @@
-
-
-import './App.css'
-import MapComponent from './components/map/map'
-import Model from './components/model/model'
-/* import PotholeDetection from './components/model/model' */
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+import MapComponent from './components/map/map';
+import Home from './components/home/home';
+import { useState } from 'react';
+import UserC from './components/user/user';
+import { floor } from '@tensorflow/tfjs';
 
 function App() {
 
-  return (
-    <>
-  
-    <body>
-        <nav>
-         
-            <div className="navigation">
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Report</a></li>
-                    <li><a href="#">Login | Register</a></li>
-                </ul>
-            </div>
-        </nav>
-        <section id="home">
-            <h2>Détection et classNameification des Défauts Routiers</h2>
-            <p>Détectez et classNameez les Défauts Routiers avec IA . Des routes plus sûres et une gestion efficace de l'infrastructure !</p>
-            <div className="btn">
-                <a className="blue" href="#model-preview">Prévisualisation du modèle IA</a>
-                <a className="yellow" href="#">About</a>
-            </div>
-        </section>
-        <section id="features">
-            <h1>Fonctionnalités du Projet</h1>
-            <p>Détection, analyse et classNameification automatique des Défauts Routiers</p>
-            <div className="fea-base">
-                <div className="fea-box">
-                    <i className="fa-sharp fa-solid fa-magnifying-glass-location"></i>
-                    <h3>Détection</h3>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-                </div>
-                <div className="fea-box">
-                    <i className="fas fa-cog"></i>
-                    <h3>Analyse</h3>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-                </div>
-                <div className="fea-box">
-                    <i className="fa-solid fa-chart-simple"></i>
-                    <h3>classNameification</h3>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-                </div>
-            </div>
-        </section>
-        <section id="model-preview">
-            <h1>Prévisualisation du modèle IA</h1>
-            
-            <video width="800px" height="300px" controls>
-                
-            </video>
-        </section>
-        <MapComponent/>
-        <Model/>
-        {/* <PotholeDetection></PotholeDetection> */}
-    </body>
+    interface User {
+        username: string;
+        password: string;
+    }
+    const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+    const [displaySign,setDisplaySign] = useState(false);
+    const [showUserC, setShowUserC] = useState(false); 
+    // Function to update loggedInUser state
+    const handleLogin = (user: User) => {
+        setLoggedInUser(user);
+    };
+    const handleLogout = () => {
+        setLoggedInUser(null);
+      };
+      const handleShowUserC = () => {
+        setShowUserC(true); // Set showUserC state to true to display UserC
+    };
+
+    const handleHideUserC = () => {
+        setShowUserC(false); // Set showUserC state to false to hide UserC
+    };
     
-    </>
-  )
-  
+    return (
+        <div>
+            
+            {!showUserC && <Home loggedInUser={loggedInUser} onShowUserC={handleShowUserC}  />}
+            {!showUserC && <MapComponent loggedInUser={loggedInUser} />}
+            {showUserC && <UserC onLogin={handleLogin} onLogout={handleLogout} onHideUserC={handleHideUserC} />}
+
+        </div>
+    );
 }
 
-export default App
+export default App;
