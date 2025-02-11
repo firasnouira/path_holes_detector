@@ -1,5 +1,4 @@
 .dropzone {
-    width: 80%;
     max-width: 750px;
     height: 44vh;
     margin: 0 auto;
@@ -11,22 +10,20 @@
     justify-content: center;
     align-items: center;
     position: relative;
-    
-    /* For button positioning */
 }
 
 
 
 .dropzone .dropzone-inner {
+    max-height: 60%;
     padding: 20px;
     text-align: center;
     margin-bottom: 10px;
 }
 .button-container {
     display: flex;
-    justify-content: space-between; /* Distribute buttons evenly */
+    justify-content: space-between; 
   }
   .button-container button {
-    /* Existing button styles... */
-    margin: 0 5px; /* Add some spacing between buttons */
+    margin: 0 5px; 
   }

@@ -58,7 +58,7 @@ export default function Intro({loggedInUser} : MapComponentProps) {
             (position) => {
                 console.log(position.coords.latitude, position.coords.longitude);
                 pos.lat = position.coords.latitude,
-                    pos.lng = position.coords.longitude
+                pos.lng = position.coords.longitude
 
             },
         );
@@ -96,12 +96,11 @@ export default function Intro({loggedInUser} : MapComponentProps) {
                  setPass([...pass, newPoint]);
              },
          ); */
-    }
-
-
+    };
 
     socket.on("new_counts", (data) => {
         console.log("new B4 and should add times", data)
+        console.log(selectedLocation)
         addNewHole(data)
         /* let pos: { lat: number, lng: number };
         navigator.geolocation.getCurrentPosition(
@@ -113,6 +112,7 @@ export default function Intro({loggedInUser} : MapComponentProps) {
             },
         ); */
     });
+    
 
     /*  return () => {
          socket.off('new_counts');
@@ -126,11 +126,12 @@ export default function Intro({loggedInUser} : MapComponentProps) {
         setDangerValue(data);
     };
     function handleMapDblClick(event: any) {
-        /*  const newLat = event.detail.latLng.lat;
-         const newLng = event.detail.latLng.lng; */
+        
          if (!loggedInUser) {
             return
          }
+         /*  const newLat = event.detail.latLng.lat;
+         const newLng = event.detail.latLng.lng; */
         setSelectedLocation(event.detail.latLng);
         setShowAddHolePopup(true);
 

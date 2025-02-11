@@ -148,3 +148,15 @@ nav .navigation ul li a:hover{
     text-align: center;
 }
 
+.hint {
+    margin: 20px auto; 
+    padding: 10px;
+    background-color: #f8f9fa; 
+    border: 1px solid #ddd; 
+    border-radius: 5px; 
+    color: #6c757d; 
+    font-size: 0.9em; 
+    text-align: center; 
+    max-width: 600px; 
+}
+

@@ -10,20 +10,19 @@ from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 
 from collections import Counter
-   
+  
 import threading
 import time
 import datetime
 import random 
-model = YOLO('C:/Users/HP/Desktop/University/2eme/sem2/pfa/react-project/flask/best.pt')
+model = YOLO("./model/best.pt")
 
 app = Flask(__name__)
 cors = CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*") 
 
 def detected(count):
-   print("3DETECTEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEED3 now sending")
-   socketio.emit("holes_detected",count)
+   socketio.emit("new_counts",count)
 def randomize():
   return random.random()
 holes = [
@@ -71,8 +70,6 @@ def detectImag():
             x1, y1, x2, y2 = int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])
             cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
             detections.append({
-                
-             
                 'box': [x1, y1, x2, y2]
             })
     
@@ -80,12 +77,11 @@ def detectImag():
   _, buffer = cv2.imencode('.jpg', image)
   image_io = BytesIO(buffer)
   if len(detections) > 0:
-    socketio.emit('new_counts', len(detections))
+    detected(len(detections))
     return send_file(image_io, mimetype='image/jpeg')
   else:
     return jsonify({'message': 'no detections'})
 
-    # Return the image as a response
   
 
 
@@ -105,10 +101,10 @@ def detectVideo():
   cap.set(cv2.CAP_PROP_FRAME_WIDTH, new_width)
   cap.set(cv2.CAP_PROP_FRAME_HEIGHT, new_height)
     
-  region_points = [(0, 500)#(x,y)fo9 al imin 
-                   ,(640, 500)#(x,y)fo9 al isar 
-                   ,(640, 360)#(x,y) louta al imin 
-                   ,(0, 360)#(x,y) louta al isar
+  region_points = [(0, 500)#(x,y)top right
+                   ,(640, 500)#(x,y)top left
+                   ,(640, 360)#(x,y) bottom right
+                   ,(0, 360)#(x,y)bottom left
                    ]
   video_writer = cv2.VideoWriter("object_counting_output.avi", cv2.VideoWriter_fourcc(*"mp4v"), fps, (new_width, new_height))
   counter = object_counter.ObjectCounter()
@@ -119,7 +115,6 @@ def detectVideo():
   new_counts=0
   while cap.isOpened() and not windowClosed:
     success, im0 = cap.read()
-
     if not success:
       print("Video frame is empty or video processing has been successfully completed.")
       break
@@ -134,10 +129,9 @@ def detectVideo():
 
     new_counts = counter.in_counts
     if old_count != new_counts :
+      detected(new_counts-old_count)
       old_count=new_counts
-      socketio.emit('new_counts', new_counts)
-      print("yes")
-      detected(1)
+      
   cap.release()
   video_writer.release()
   cv2.destroyAllWindows()
@@ -168,7 +162,7 @@ def initStream():
     if not success:
       print("stream frame is empty or stream processing has been successfully completed.")
       break
-    key = cv2.waitKey(1)      
+    key = cv2.waitKey(0)      
     if key == ord('q'):      #KEYBOARD KEY <--------------------
           windowClosed = True
           break

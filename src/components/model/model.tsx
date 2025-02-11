@@ -136,32 +136,80 @@ interface User {
             }
         }
     };
-
-    const handleUpload = async () => {
+    
+    const ProcessImage = async () =>{
         if (!file) {
-            setMessage('Please select a video to upload');
+            setMessage('Please select an image to upload');
             return;
-        }
+          }
+          setImageD(null);
+          setMessage("PROCESSING!!!!!") ;
+          const formData = new FormData();
+          formData.append('image', file);
+          setFile(null)
+          try {
+            const response = await axios.post('http://127.0.0.1:5000/api/detectImage', formData, {
+              responseType: 'blob'
+            });
+            if (response.headers['content-type'] === 'application/json') {
+              // Convert the blob to text to check the JSON content
+              const reader = new FileReader();
+              reader.onload = function () {
+                const jsonResponse = JSON.parse(reader.result as string);
+                setMessage(jsonResponse.message);
+                setImageD(null);
+              };
+              reader.readAsText(response.data);
+            } else {
+              const imageUrl = URL.createObjectURL(response.data);
+              
+              setImageD(imageUrl);
+              setMessage('')
+             
+              
+              
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            setMessage('An error occurred');
+          }
+    }
+    const ProcessVideo = async () => {
         setDisableBtn(true)
         const formData = new FormData();
         formData.append('video', file);
+        
         try {
             const response = await axios.post('http://127.0.0.1:5000/api/detectVideo', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            setMessage(response.data.data);
-            console.log(response.data.data)
+            setMessage(response.data.message);
             console.log(message)
         } catch (error) {
             console.error(error);
             setMessage('An error occurred during upload');
         }
+    }
+    const [imageD, setImageD] = useState<string | null>()
+    const handleUpload = async () => {
+        if (!file) {
+            setMessage('Please select a video to upload');
+            return;
+        }
+        if (file.type.startsWith('video/')) {
+            ProcessVideo()
+        }
+        if (file.type.startsWith('image/')) {
+            
+            ProcessImage()
+        }
         setDisableBtn(false)
     };
 
     const handleSelectPicture = () => {
+        setImageD(null);
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = 'image/*'; // Accept only image files
@@ -177,6 +225,7 @@ interface User {
     };
 
     const handleSelectVideo = () => {
+        setImageD(null)
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = 'video/*'; // Accept only video files
@@ -189,7 +238,7 @@ interface User {
             }
         };
         input.click();
-    };
+    }; 
 
     const launchCam = async () => {
         setDisableBtn(true)
@@ -216,9 +265,18 @@ interface User {
     return (
         <div>
             <div className="dropzone" onDragOver={(event) => event.preventDefault()} onDrop={handleDrop}>
-                <div className="dropzone-inner">
+                {!file && !imageD && <div className="dropzone-inner">
                     <p>{message}</p>
-                </div>
+                </div>}
+                {file && file.type.startsWith('image/') && !imageD && <div className="dropzone-inner">
+                    <img src={URL.createObjectURL(file)} alt="Uploaded" style={{ width: '100%', height: '100%' }} />
+                </div>}
+                {imageD && <div className="dropzone-inner">
+                    <img src={imageD} alt="Annotated Image" style={{ width: '100%', height: '100%' }} />
+                </div> }
+                {file && file.type.startsWith('video/') && !imageD && <div className="dropzone-inner">
+                    {message}
+                </div>}
                 <div className="button-container">
                     <Button variant="primary" size="sm" onClick={handleSelectPicture} disabled={disableBtn}>
                         Select Picture

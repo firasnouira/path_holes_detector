@@ -25,7 +25,7 @@ function Home({loggedInUser, onShowUserC} : HomeProps) {
                         <li><a href="index.html">Accueil</a></li>
                         <li><a href="#">À Propos</a></li>
                         <li><a href="#model-preview">Signaler</a></li>
-                        <li><a href="#"><button onClick={onShowUserC}>Sign In / Sign Up</button></a></li>
+                        <li><a href="#"><button className='btn btn-primary btn-sm'onClick={onShowUserC}>Sign In / Sign Up</button></a></li>
                     </ul>
                 </div>
             </nav>
@@ -64,6 +64,10 @@ function Home({loggedInUser, onShowUserC} : HomeProps) {
                     <Model loggedInUser={loggedInUser}  />
                 </section>
             </section>
+            <div className="hint">
+                <strong>Hint : </strong>
+                {loggedInUser ? "Double click on the map to simulate current location" : "Log in to begin detecting"}
+            </div>
         </>
     )
 }

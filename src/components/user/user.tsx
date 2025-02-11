@@ -73,7 +73,7 @@ const UserC: React.FC<UserCProps> = ({ onLogin, onLogout, onHideUserC }) => {
                         <li><a href="index.html">Accueil</a></li>
                         <li><a href="#">À Propos</a></li>
                         <li><a href="#model-preview">Signaler</a></li>
-                        <li><a href="#"><button onClick={onHideUserC}>Sign In / Sign Up</button></a></li>
+                        <li><a href="#"><button className='btn btn-primary btn-sm' onClick={onHideUserC}>Sign In / Sign Up</button></a></li>
                     </ul>
                 </div>
             </nav>
@@ -93,7 +93,7 @@ const UserC: React.FC<UserCProps> = ({ onLogin, onLogout, onHideUserC }) => {
                 </form>
                 <p>{message}</p>
                 <p>{isLogin ? "Don't have an account?" : "Already have an account?"} <button className="btn btn-link" onClick={toggleForm}>{isLogin ? 'Sign Up' : 'Login'}</button></p>
-                <p><button className="btn btn-link" onClick={onHideUserC}>Close</button></p>
+                <p><button className="btn btn-primary btn-sm" onClick={onHideUserC}>Close</button></p>
             </div>
         </div>
         </div>

@@ -47,7 +47,7 @@ const PopupModal: React.FC<PopupModalProps> = ({ showAddHolePopup, handleModalCl
 
       const extension = droppedFile.name.split('.').pop()?.toLowerCase();
       if (extension) {
-        setMessage(<img src={URL.createObjectURL(droppedFile)} alt="Uploaded" style={{ width: '300px', height: 'auto' }} />);
+        setMessage("dropped image loaded")
         setFile(droppedFile);
       } else {
         setMessage('Select another file');
@@ -63,7 +63,7 @@ const PopupModal: React.FC<PopupModalProps> = ({ showAddHolePopup, handleModalCl
       const selectedFile = (e.target as HTMLInputElement).files?.[0];
       if (selectedFile) {
         setFile(selectedFile);
-        setMessage("PROCESSING...");
+        setMessage("image uploaded");
       }
     };
     input.click();
@@ -72,9 +72,10 @@ const PopupModal: React.FC<PopupModalProps> = ({ showAddHolePopup, handleModalCl
   const handleUpload = async () => {
 
     if (!file) {
-      setMessage('Please select a video to upload');
+      setMessage('Please select an image to upload');
       return;
     }
+    setMessage("PROCESSING!!!!!")
     onDanger(dangerValue);
     const formData = new FormData();
     formData.append('image', file);
@@ -95,6 +96,7 @@ const PopupModal: React.FC<PopupModalProps> = ({ showAddHolePopup, handleModalCl
       } else {
         const imageUrl = URL.createObjectURL(response.data);
         setImageD(imageUrl);
+       
         setMessage('');
         
       }
@@ -113,7 +115,7 @@ const PopupModal: React.FC<PopupModalProps> = ({ showAddHolePopup, handleModalCl
     <>
       <Modal show={showAddHolePopup} onHide={handleClose} centered size='xl'>
         <Modal.Header closeButton>
-          <Modal.Title>Add New Hole</Modal.Title>
+          <Modal.Title>signaler un defaut routier</Modal.Title>
         </Modal.Header>
         <Modal.Body >
           <div className='customModal'>
