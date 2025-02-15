@@ -6,7 +6,7 @@ type hole = {
     key : string
 }
  */
-const holes = [
+export const holes = [
     {lat:-34.397,lng:150.0,danger:0.0},
     {lat:-34.397,lng:150.7,danger:0},
     {lat:-34.397,lng:151.644,danger:0},
@@ -14,7 +14,7 @@ const holes = [
 ]
    
    
-
+export {};
 
 /* const formatted : hole[] = holes.map(([lat,lng,danger])=>({
   
