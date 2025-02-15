@@ -15,7 +15,8 @@ import threading
 import time
 import datetime
 import random 
-model = YOLO("flask/model/best.pt")
+model_path = os.path.join(os.path.dirname(__file__), "model", "best.pt")
+model = YOLO(model_path)
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -88,6 +89,8 @@ def detectImag():
 
 @app.route('/api/detectVideo',methods=['POST'])
 def detectVideo():
+  UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
+  os.makedirs(UPLOAD_FOLDER, exist_ok=True)
   video_path = os.path.join(app.root_path, 'uploads', request.files['video'].filename)
   os.makedirs(os.path.dirname(video_path), exist_ok=True)
   request.files['video'].save(video_path)
