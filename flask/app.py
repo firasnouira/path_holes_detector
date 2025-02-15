@@ -15,7 +15,7 @@ import threading
 import time
 import datetime
 import random 
-model = YOLO("./model/best.pt")
+model = YOLO("flask/model/best.pt")
 
 app = Flask(__name__)
 cors = CORS(app)
