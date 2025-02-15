@@ -1,5 +1,5 @@
 {
-    "homepage": "https://firasnouira.github.io/path_holes_detector",
+    "homepage": ".",
     "name": "react-project",
     "private": true,
     "proxy": "http://localhost:5000",
