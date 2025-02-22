@@ -17,7 +17,8 @@ import datetime
 import random 
 model_path = os.path.join(os.path.dirname(__file__), "model", "best.pt")
 model = YOLO(model_path)
-
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app = Flask(__name__)
 cors = CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*") 
@@ -58,9 +59,7 @@ def read_image_from_base64(base64_image):
 
 @app.route('/api/detectImage', methods=['POST'])
 def detectImag():
-  UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
-  os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-  image = request.files['image']
+  """ image = request.files['image']
   image = cv2.imread(image)
   image = cv2.resize(image, (640 , 640))
   # Rearrange dimensions to [1, 3, 640, 640]
@@ -84,10 +83,60 @@ def detectImag():
     detected(len(detections))
     return send_file(image_io, mimetype='image/jpeg')
   else:
-    return jsonify({'message': 'no detections'})
+    return jsonify({'message': 'no detections'}) """
+  try:
+      # Get the uploaded file
+      image_file = request.files['image']
+      image_path = os.path.join(UPLOAD_FOLDER, image_file.filename)
 
+      # Ensure it's a valid image file
+      if image_file.filename == '':
+          return jsonify({'error': 'No file uploaded'}), 400
+
+      # Save the uploaded image
+      image_file.save(image_path)
+
+      # Verify if the file exists and is readable
+      if not os.path.exists(image_path):
+          return jsonify({'error': 'File not found after saving'}), 500
+
+      # Read the saved image using OpenCV (use np.fromfile for Windows compatibility)
+      image_array = np.fromfile(image_path, np.uint8)
+      image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+
+      if image is None:
+          return jsonify({'error': 'Failed to read image'}), 400
+
+      # Resize image
+      image = cv2.resize(image, (640, 640))
+
+      # Run detection model
+      results = model(image)
+
+      detections = []
+      for result in results:
+          boxes = result.boxes.cpu().numpy()
+          xyxys = boxes.xyxy
+          for xyxy in xyxys:
+              x1, y1, x2, y2 = map(int, xyxy)
+              cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+              detections.append({'box': [x1, y1, x2, y2]})
+
+      # Convert the annotated image to a format suitable for sending
+      _, buffer = cv2.imencode('.jpg', image)
+      image_io = BytesIO(buffer)
+
+      # Remove the processed image after reading it
+      os.remove(image_path)
+
+      if detections:
+          return send_file(image_io, mimetype='image/jpeg')
+      else:
+          return jsonify({'message': 'No detections'})
+
+  except Exception as e:
+    return jsonify({'error': str(e)}), 500
   
-
 
 
 @app.route('/api/detectVideo',methods=['POST'])
