@@ -57,7 +57,7 @@ def read_image_from_base64(base64_image):
   input_image = np.transpose(input_image, (0, 3, 1, 2))  """
 
 
-@app.route('/api/detectImage', methods=['POST'])
+@app.route('/api/detectImage', methods=['POST','GET'])
 def detectImag():
   """ image = request.files['image']
   image = cv2.imread(image)
