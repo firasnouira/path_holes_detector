@@ -20,7 +20,7 @@ model = YOLO(model_path)
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app = Flask(__name__)
-CORS(app,resources={r"/*": {"origins": "*"}})
+CORS(app,resources={r'/api/*': {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*",async_mode="eventlet") 
 
 def detected(count):
