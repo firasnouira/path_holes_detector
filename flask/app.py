@@ -21,7 +21,7 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app = Flask(__name__)
 cors = CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*") 
+socketio = SocketIO(app, cors_allowed_origins="*",async_mode="eventlet") 
 
 def detected(count):
    with app.app_context():  # Ensure Flask context
