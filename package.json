@@ -2,7 +2,18 @@
     "homepage": ".",
     "name": "react-project",
     "private": true,
-    "proxy": "http://localhost:5000",
+    "server": {
+        "proxy": {
+          "/socket.io": {
+            "target": "https://path-holes-detector-server.onrender.com/",
+            "ws": true,
+            "changeOrigin": true
+          },
+          "/api": {
+            "target": "https://path-holes-detector-server.onrender.com",
+            "changeOrigin": true
+          }
+        }},
     "version": "0.0.0",
     "type": "module",
     "scripts": {
