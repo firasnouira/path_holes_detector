@@ -105,8 +105,9 @@ def detectImag():
 
       # Read the saved image using OpenCV (use np.fromfile for Windows compatibility)
       image_array = np.fromfile(image_path, np.uint8)
+      os.remove(image_path)
       image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
-
+      del image_array
       if image is None:
           return jsonify({'error': 'Failed to read image'}), 400
 
@@ -126,15 +127,17 @@ def detectImag():
               detections.append({'box': [x1, y1, x2, y2]})
 
       # Convert the annotated image to a format suitable for sending
-      _, buffer = cv2.imencode('.jpg', image)
-      image_io = BytesIO(buffer)
-
+     
       # Remove the processed image after reading it
-      os.remove(image_path)
-
+      
       if detections:
+          _, buffer = cv2.imencode('.jpg', image)
+          del image
+          image_io = BytesIO(buffer)
+          del buffer
           return send_file(image_io, mimetype='image/jpeg')
       else:
+          del image
           return jsonify({'message': 'No detections'})
 
   except Exception as e:

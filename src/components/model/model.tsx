@@ -278,13 +278,13 @@ interface User {
                     {message}
                 </div>}
                 <div className="button-container">
-                    <Button variant="primary" size="sm" onClick={handleSelectPicture} disabled={disableBtn}>
+                    <Button variant="primary" size="sm" onClick={handleSelectPicture} >
                         Select Picture
                     </Button>
-                    <Button variant="primary" size="sm" onClick={handleSelectVideo} disabled={disableBtn}>
+                    <Button variant="primary" size="sm" onClick={handleSelectVideo} >
                         Select Video
                     </Button>
-                    <Button variant="secondary" size="sm" onClick={launchCam} disabled={disableBtn}>
+                    <Button variant="secondary" size="sm" onClick={launchCam} >
                         launchCam
                     </Button>
                 </div>
@@ -293,7 +293,7 @@ interface User {
                     size="sm"
                     style={{ position: 'absolute', bottom: 10, right: 10, padding: '10px 20px', borderRadius: '10px' }}
                     onClick={handleUpload}
-                    disabled={disableBtn}
+                    
                 >
                     Upload
                 </Button>
