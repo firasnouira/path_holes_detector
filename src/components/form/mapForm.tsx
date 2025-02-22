@@ -14,7 +14,7 @@ interface PopupModalProps {
   handleModalClose: () => void;
   onDanger: (data: number) => void;
 }
-const socket = io('http://localhost:5000');
+const socket = io(import.meta.env.VITE_API_URL);
 const PopupModal: React.FC<PopupModalProps> = ({ showAddHolePopup, handleModalClose, onDanger }) => {
   const [dangerValue, setDangerValue] = useState(0);
   useState(()=>{
@@ -81,7 +81,7 @@ const PopupModal: React.FC<PopupModalProps> = ({ showAddHolePopup, handleModalCl
     formData.append('image', file);
     setFile(null)
     try {
-      const response = await axios.post('http://127.0.0.1:5000/api/detectImage', formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/detectImage`, formData, {
         responseType: 'blob'
       });
       if (response.headers['content-type'] === 'application/json') {

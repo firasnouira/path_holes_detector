@@ -21,7 +21,7 @@ const UserC: React.FC<UserCProps> = ({ onLogin, onLogout, onHideUserC }) => {
     const [loggedInUser, setLoggedInUser] = useState<User | null>(null); // Track logged-in user
 
     const handleLogin = () => {
-        axios.post('http://127.0.0.1:5000/login', { username, password })
+        axios.post(`${import.meta.env.VITE_API_URL}/login`, { username, password })
             .then(response => {
                 console.log(response.data);
                 setMessage(response.data.message);
@@ -34,7 +34,7 @@ const UserC: React.FC<UserCProps> = ({ onLogin, onLogout, onHideUserC }) => {
     };
 
     const handleSignup = () => {
-        axios.post('http://127.0.0.1:5000/signup', { username, password })
+        axios.post(`${import.meta.env.VITE_API_URL}/signup`, { username, password })
             .then(response => {
                 console.log(response.data);
                 setMessage(response.data.message);

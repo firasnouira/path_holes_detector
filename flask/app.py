@@ -23,7 +23,9 @@ cors = CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*") 
 
 def detected(count):
-   socketio.emit("new_counts",count)
+   with app.app_context():  # Ensure Flask context
+        
+        socketio.emit("new_counts", count)
 def randomize():
   return random.random()
 holes = [
@@ -56,7 +58,8 @@ def read_image_from_base64(base64_image):
 
 @app.route('/api/detectImage', methods=['POST'])
 def detectImag():
-  
+  UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
+  os.makedirs(UPLOAD_FOLDER, exist_ok=True)
   image = request.files['image']
   image = cv2.imread(image)
   image = cv2.resize(image, (640 , 640))
@@ -243,9 +246,7 @@ def signup():
   
 if __name__ == '__main__':
   port = int(os.environ.get("PORT", 5000))  
-  app.run(host="0.0.0.0", port=port)
-
-
+  socketio.run(app,debug=True, host='0.0.0.0', port=5000)
 
 
 """ @app.route('/stream')

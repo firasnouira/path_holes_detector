@@ -16,7 +16,7 @@ import PopupModal from '../form/mapForm';
 import io from 'socket.io-client';
 
 let incerementer = 0
-const socket = io('http://localhost:5000');
+const socket = io(import.meta.env.VITE_API_URL);
 
 
 

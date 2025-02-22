@@ -11,7 +11,7 @@ interface MediaDeviceInfo {
     label: string; // Optional property
 }
 
-const socket = io('http://localhost:5000');
+const socket = io(import.meta.env.VITE_API_URL);
 interface User {
     username: string;
     password: string;
@@ -148,7 +148,7 @@ interface User {
           formData.append('image', file);
           setFile(null)
           try {
-            const response = await axios.post('http://127.0.0.1:5000/api/detectImage', formData, {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/detectImage`, formData, {
               responseType: 'blob'
             });
             if (response.headers['content-type'] === 'application/json') {
@@ -180,7 +180,7 @@ interface User {
         formData.append('video', file);
         
         try {
-            const response = await axios.post('http://127.0.0.1:5000/api/detectVideo', formData, {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/detectVideo`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -244,7 +244,7 @@ interface User {
         setDisableBtn(true)
         setMessage("processing steeam")
         try {
-            const response = await axios.post('http://127.0.0.1:5000/api/initStream', {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/initStream`, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
