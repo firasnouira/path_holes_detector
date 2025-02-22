@@ -1,3 +1,6 @@
+import eventlet
+eventlet.monkey_patch() 
+
 import base64
 from io import BytesIO
 import os
