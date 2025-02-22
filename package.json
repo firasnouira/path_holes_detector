@@ -4,6 +4,10 @@
     "private": true,
     "server": {
         "proxy": {
+            "/": {
+            "target": "https://path-holes-detector-server.onrender.com",
+            "changeOrigin": true
+          },
           "/socket.io": {
             "target": "https://path-holes-detector-server.onrender.com/",
             "ws": true,
