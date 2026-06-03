@@ -80,8 +80,3 @@ After fine-tuning, detection was significantly more precise with fewer false pos
 <img width="889" height="385" alt="image" src="https://github.com/user-attachments/assets/9f3f29be-3bdc-4dec-844f-0d1a32c597a1" />
 
 
-```
-<img width="889" height="385" alt="image" src="https://github.com/user-attachments/assets/d2a6bc4d-67fe-44fb-b7ed-fedffedbb7bf" />
-
-```
-
