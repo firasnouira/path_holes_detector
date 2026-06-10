@@ -4,7 +4,7 @@ numpy
 ultralytics
 flask-cors
 flask-socketio
-eventlet
-gunicorn
+eventlet==0.39.0
+gunicorn==23.0.0
 gevent
 gevent-websocket
