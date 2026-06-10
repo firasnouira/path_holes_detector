@@ -5,16 +5,16 @@
     "server": {
         "proxy": {
             "/": {
-            "target": "https://path-holes-detector-server.onrender.com",
+            "target": "https://firas99019-potholedetec.hf.space",
             "changeOrigin": true
           },
           "/socket.io": {
-            "target": "https://path-holes-detector-server.onrender.com/",
+            "target": "https://firas99019-potholedetec.hf.space",
             "ws": true,
             "changeOrigin": true
           },
           "/api": {
-            "target": "https://path-holes-detector-server.onrender.com",
+            "target": "https://firas99019-potholedetec.hf.space",
             "changeOrigin": true
           }
         }},

@@ -24,17 +24,17 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app = Flask(__name__)
 CORS(app,resources={r'/*': {"origins": "*"}})
-socketio = SocketIO(app, cors_allowed_origins="*",async_mode="eventlet") 
+socketio = SocketIO(app, cors_allowed_origins="*",async_mode="  eventlet") 
 
 def detected(count):
    with app.app_context():  # Ensure Flask context
-        
+        print(f"Emitting new_counts: {count}")
         socketio.emit("new_counts", count)
 def randomize():
   return random.random()
 holes = [
         [36.77008966161865, 10.196820932331722, randomize()],
-        [36.77380229613168, 10.19810839265887, randomize()],
+        [50.77380229613168, 10.19810839265887, randomize()],
         [36.76513920260766, 10.196220117512386, randomize()],
         [36.77146473240095, 10.188323694172542, randomize()],
         [36.73033946229021, 10.19484682649676, randomize()],
@@ -88,6 +88,7 @@ def detectImag():
   else:
     return jsonify({'message': 'no detections'}) """
   try:
+      print("Received request for image detection")
       # Get the uploaded file
       image_file = request.files['image']
       image_path = os.path.join(UPLOAD_FOLDER, image_file.filename)
@@ -135,15 +136,15 @@ def detectImag():
           del image
           image_io = BytesIO(buffer)
           del buffer
+          detected(len(detections))
           return send_file(image_io, mimetype='image/jpeg')
       else:
-          del image
           return jsonify({'message': 'No detections'})
 
   except Exception as e:
     return jsonify({'error': str(e)}), 500
   
-
+#.
 
 @app.route('/api/detectVideo',methods=['POST'])
 def detectVideo():
